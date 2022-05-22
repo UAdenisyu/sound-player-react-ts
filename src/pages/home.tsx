@@ -1,4 +1,3 @@
-import React from 'react';
 import Player from '../components/player/player';
 
 export default function HomePage() {

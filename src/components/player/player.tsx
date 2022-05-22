@@ -1,9 +1,12 @@
-import React, { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import SoundDriver from '../sound-driver/sound-driver';
+import './player.scss';
+import Spinner from '../spinner/spinner';
 
 function Player() {
   const soundController = useRef<undefined | SoundDriver>(undefined);
   const [loading, setLoading] = useState(false);
+  let fileName = useRef('');
 
   const uploadAudio = useCallback(async (event : any) => {
     const { files } = event.target;
@@ -15,6 +18,7 @@ function Player() {
     setLoading(true);
 
     const audioFile = files[0];
+    fileName.current = '"' + audioFile.name +'"';
 
     if (!audioFile || !audioFile.type.includes('audio')) {
       throw new Error('Wrong audio file');
@@ -51,50 +55,52 @@ function Player() {
     },
     [soundController]
   );
+ 
+  
 
   return (
     <div style={{ width: '100%' }}>
-      {!soundController.current && (
-        <div style={{ textAlign: 'center' }}>
-          Choose a sound &nbsp;
-          <input
-            type="file"
-            name="sound"
-            onChange={uploadAudio}
-            accept="audio/*"
-          />
-        </div>
-      )}
-      {loading && 'Loading...'}
+        <div id="waveContainer"/>
+            {!loading && !soundController.current && (
+                <div className="chooseFileWrapper">
+                    <p>Choose a sound:</p> &nbsp;
+                    <input
+                        type="file"
+                        name="sound"
+                        onChange={uploadAudio}
+                        accept="audio/*"
+                    />
+                </div>
+            )}
+        {loading && <Spinner/>}
+        {!loading && soundController.current && (
+            <div id="soundEditor">
+                <div className="currentSound"><p>Current sound:</p>{fileName.current} </div>
+                <div id="controllPanel">
+                    <input
+                    type="range"
+                    onChange={onVolumeChange}
+                    defaultValue={1}
+                    min={-1}
+                    max={1}
+                    step={0.01}
+                    />
 
-      <div style={{ width: '100%', height: '392px' }} id="waveContainer" />
+                    <button type="button" onClick={togglePlayer('play')}>
+                    Play
+                    </button>
 
-      {!loading && soundController.current && (
-        <div id="soundEditor">
-          <div id="controllPanel">
-            <input
-              type="range"
-              onChange={onVolumeChange}
-              defaultValue={1}
-              min={-1}
-              max={1}
-              step={0.01}
-            />
+                    <button type="button" onClick={togglePlayer('pause')}>
+                    Pause
+                    </button>
 
-            <button type="button" onClick={togglePlayer('play')}>
-              Play
-            </button>
+                    <button type="button" onClick={togglePlayer('stop')}>
+                    Stop
+                    </button>
+                </div>
+            </div>
+        )}
 
-            <button type="button" onClick={togglePlayer('pause')}>
-              Pause
-            </button>
-
-            <button type="button" onClick={togglePlayer('stop')}>
-              Stop
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

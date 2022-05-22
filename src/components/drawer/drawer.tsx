@@ -66,7 +66,7 @@ class Drawer {
     svg // const grid = svg
       .append('g')
       .attr('stroke-width', 0.5)
-      .attr('stroke', '#D6E5D6')
+      .attr('stroke', '#96a196')
       .call(g =>
         g
           .append('g')
@@ -106,7 +106,7 @@ class Drawer {
     g.selectAll('rect')
       .data(audioData)
       .join('rect')
-      .attr('fill', '#03A300')
+      .attr('fill', '#1518c6')
       .attr('height', d => yScale(d))
       .attr('width', () => band * padding)
       .attr('x', (_, i) => xScale(i))
